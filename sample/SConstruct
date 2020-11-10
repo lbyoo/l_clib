@@ -1,0 +1,2 @@
+
+Program("list_test",["list_test.c","../src/l_list.c"], CPPPATH = '../src/inc', CCFLAGS = "-g")
