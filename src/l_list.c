@@ -2,6 +2,7 @@
 #include "l_type.h"
 #include "l_mem.h"
 #include "l_log.h"
+#include "l_lock.h"
 /**
  * 销毁一个list元素
  */
@@ -23,6 +24,7 @@ int l_list_init(l_list_s *list)
     list->current = L_NULL;
     list->last = L_NULL;
     list->size = 0;
+    L_LOCK_INIT(&list->lock);
     return L_SUCCESS;
 }
 
@@ -48,7 +50,7 @@ int l_list_destroy(l_list_s *list)
         l_list_elt_destroy(p);
         p = next;
     }
-
+    L_LOCK_DESTROY(&list->lock);
     return L_SUCCESS;
 }
 /**
@@ -62,6 +64,7 @@ int l_list_lpush(l_list_s *list, void *data, size_t size)
 {
     L_ASSERT(list);
     l_list_elt_s *elt;
+    L_LOCK(&list->lock);
     L_MALLOC(elt, l_list_elt_s, 1);
     L_MALLOC(elt->data, char, size);
     memcpy(elt->data, data, size);
@@ -79,6 +82,7 @@ int l_list_lpush(l_list_s *list, void *data, size_t size)
     {
         list->last = elt;
     }
+    L_UNLOCK(&list->lock);
     return L_SUCCESS;
 }
 
@@ -93,6 +97,7 @@ int l_list_rpush(l_list_s *list, void *data, size_t size)
 {
     L_ASSERT(list);
     l_list_elt_s *elt;
+    L_LOCK(&list->lock);
     L_MALLOC(elt, l_list_elt_s, 1);
     L_MALLOC(elt->data, char, size);
     memcpy(elt->data, data, size);
@@ -109,6 +114,7 @@ int l_list_rpush(l_list_s *list, void *data, size_t size)
     {
         list->first = elt;
     }
+    L_UNLOCK(&list->lock);
     return L_SUCCESS;
 }
 
@@ -130,6 +136,7 @@ int l_list_insert(l_list_s *list, int n, void *data, size_t size)
     }
     l_list_elt_s *p;
     l_list_elt_s *elt;
+    L_LOCK(&list->lock);
     L_MALLOC(elt, l_list_elt_s, 1);
     L_MALLOC(elt->data, char, size);
     memcpy(elt->data, data, size);
@@ -163,6 +170,7 @@ int l_list_insert(l_list_s *list, int n, void *data, size_t size)
 
 success:
     list->size++;
+    L_UNLOCK(&list->lock);
     return L_SUCCESS;
 }
 
@@ -182,6 +190,7 @@ int l_list_remove(l_list_s *list, int n)
     }
     l_list_elt_s *p;
     l_list_elt_s *elt;
+    L_LOCK(&list->lock);
     int i = 0;
     p = list->first;
     while(i < n)
@@ -217,6 +226,7 @@ int l_list_remove(l_list_s *list, int n)
 success:
     l_list_elt_destroy(elt);
     list->size--;
+    L_UNLOCK(&list->lock);
     return L_SUCCESS;
 }
 
@@ -259,6 +269,7 @@ l_list_elt_s *l_list_lpop(l_list_s *list)
         return L_NULL;
     }
     l_list_elt_s *elt;
+    L_LOCK(&list->lock);
     elt = list->first;
     list->first = list->first->next;
     if(list->first)
@@ -270,6 +281,7 @@ l_list_elt_s *l_list_lpop(l_list_s *list)
     {
         list->last = L_NULL;
     }
+    L_UNLOCK(&list->lock);
     return elt;
 }
 
@@ -286,6 +298,7 @@ l_list_elt_s *l_list_rpop(l_list_s *list)
         return L_NULL;
     }
     l_list_elt_s *elt;
+    L_LOCK(&list->lock);
     elt = list->last;
     list->last = list->last->pre;
     if(list->last)
@@ -297,6 +310,7 @@ l_list_elt_s *l_list_rpop(l_list_s *list)
     {
         list->first = L_NULL;
     }
+    L_UNLOCK(&list->lock);
     return elt;
 }
 
@@ -326,6 +340,7 @@ l_list_elt_s *l_list_elt_clone(l_list_elt_s *src)
  */
 l_list_s *l_list_slice(l_list_s *list,  int m, int n)
 {
+    L_LOCK(&list->lock);
     if(m < 0 || n > list->size - 1)
     {
         L_LOG_ERROR("out of range (%d:%d)/%d\n", m,n, list->size);
@@ -345,6 +360,7 @@ l_list_s *l_list_slice(l_list_s *list,  int m, int n)
         }
         i++;
     }
+    L_UNLOCK(&list->lock);
     return dest;
 
 }

@@ -3,8 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "l_mem.h"
-#include "l_log.h"
+
 
 
 
@@ -15,6 +14,8 @@ typedef struct l_list
     l_list_elt_s *current;
     l_list_elt_s *last;
     int size;
+    pthread_mutex_t lock;
+    
 } l_list_s;
 
 typedef struct l_list_elt

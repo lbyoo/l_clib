@@ -1,6 +1,7 @@
 #include "l_list.h"
 #include "l_log.h"
 #include "l_type.h"
+#include "l_mem.h"
 
 int test_remove()
 {
