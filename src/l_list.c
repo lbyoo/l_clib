@@ -12,7 +12,7 @@ static int l_list_elt_destroy(l_list_elt_s *elt)
 }
 
 /**
- * 初始化一个list，将list的首节点/末节点置空，size设置为0
+ * l_list_init(l_list_s *list): 初始化一个list，将list的首节点/末节点置空，size设置为0
  * 参数：list，l_list_s指针，传入函数前，需经过内存申请
  * 返回：0：成功，其他值失败
  */
@@ -27,7 +27,7 @@ int l_list_init(l_list_s *list)
 }
 
 /**
- * 销毁一个list
+ * l_list_destroy(l_list_s *list): 销毁一个list
  * 参数：list指针，如果传入的指针为空，则直接返回成功
  * 从list的首节点开始，依次释放list元素所占内存
  * list本身所占内存不会在此函数中释放，需要单独释放，因为调用时可能传入的时一个局部list变量
@@ -52,7 +52,7 @@ int l_list_destroy(l_list_s *list)
     return L_SUCCESS;
 }
 /**
- * 从list的左侧添加一个元素
+ * l_list_lpush(l_list_s *list, void *data, size_t size): 从list的左侧添加一个元素
  * 参数：list，list对象指针
  *       data，要添加到list中的数据
  *       size, 要添加到list中的数据的长度
@@ -83,7 +83,7 @@ int l_list_lpush(l_list_s *list, void *data, size_t size)
 }
 
 /**
- * 从list的右侧添加一个元素
+ * l_list_rpush(l_list_s *list, void *data, size_t size): 从list的右侧添加一个元素
  * 参数：list，list对象指针
  *       data，要添加到list中的数据
  *       size, 要添加到list中的数据的长度
@@ -113,7 +113,7 @@ int l_list_rpush(l_list_s *list, void *data, size_t size)
 }
 
 /**
- * 从list的第n个元素的位置添加一个元素，第n个元素变成第n+1个元素
+ * l_list_insert(l_list_s *list, int n, void *data, size_t size): 从list的第n个元素的位置添加一个元素，第n个元素变成第n+1个元素
  * 参数：list，list对象指针
  *       n，插入元素的位置
  *       data，要添加到list中的数据
@@ -167,7 +167,7 @@ success:
 }
 
 /**
- * 从list中，移除第n个元素，被移除的元素会直接在函数内释放内存
+ * l_list_remove(l_list_s *list, int n): 从list中，移除第n个元素，被移除的元素会直接在函数内释放内存
  * 参数：list，list对象指针
  *       n，要移除的元素索引
  * 返回：0：成功，其他值失败
@@ -221,7 +221,7 @@ success:
 }
 
 /**
- * 从list获取第n个元素，返回的元素指针依然指在list中，不会影响list的连续性，修改获取的元素，同时会修改list中的元素，
+ * l_list_get(l_list_s *list, int n): 从list获取第n个元素，返回的元素指针依然指在list中，不会影响list的连续性，修改获取的元素，同时会修改list中的元素，
  * 如修改元素的前后指针，会破坏元list的连续，使用时注意
  * 参数：list，list对象指针
  *       n，要获取的元素索引
@@ -247,7 +247,7 @@ l_list_elt_s *l_list_get(l_list_s *list, int n)
 }
 
 /**
- * 从list的左侧弹出一个元素，该元素从list中被移除
+ * l_list_lpop(l_list_s *list): 从list的左侧弹出一个元素，该元素从list中被移除
  * 参数：list，list对象指针
  * 返回：元素指针，如果list已空，则返回NULL
  */
@@ -274,7 +274,7 @@ l_list_elt_s *l_list_lpop(l_list_s *list)
 }
 
 /**
- * 从list的右侧弹出一个元素，该元素从list中被移除
+ * l_list_rpop(l_list_s *list): 从list的右侧弹出一个元素，该元素从list中被移除
  * 参数：list，list对象指针
  * 返回：元素指针，如果list已空，则返回NULL
  */
@@ -301,7 +301,7 @@ l_list_elt_s *l_list_rpop(l_list_s *list)
 }
 
 /**
- * 克隆一个list元素
+ * l_list_elt_clone(l_list_elt_s *src): 克隆一个list元素
  * 参数：src，被克隆的源元素指针
  * 返回：被克隆的元素指针
  */
@@ -318,7 +318,7 @@ l_list_elt_s *l_list_elt_clone(l_list_elt_s *src)
 }
 
 /**
- * list切片，返回一个切片的list
+ * l_list_slice(l_list_s *list,  int m, int n): list切片，返回一个切片的list
  * 参数：list，原list
  *      m，切片起始位置
  *      n，切片结束位置
