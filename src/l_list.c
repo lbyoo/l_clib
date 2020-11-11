@@ -6,7 +6,7 @@
 /**
  * 销毁一个list元素,如果指定了元素销毁函数，则调用函数销毁
  */
-static int l_list_elt_destroy(l_list_s *list, l_list_elt_s *elt)
+int l_list_elt_destroy(l_list_s *list, l_list_elt_s *elt)
 {
     if(list->free_elt)
     {
@@ -46,16 +46,28 @@ int l_list_destroy(l_list_s *list)
     {
         return L_SUCCESS;
     }
-    l_list_elt_s *p = list->first;
-    l_list_elt_s *next = L_NULL;
-
-    while(p)
+    l_list_elt_s *p;
+    while((p = l_list_lpop(list)) != L_NULL)
     {
-        next = p->next;
         l_list_elt_destroy(list, p);
-        p = next;
     }
+    
     L_LOCK_DESTROY(&list->lock);
+    return L_SUCCESS;
+}
+/**
+ * l_list_empty(l_list_s *list): 清空list
+ * 参数：list指针，如果传入的指针为空，则直接返回成功
+ * 返回：0：成功，其他值失败
+ */
+int l_list_empty(l_list_s *list)
+{
+    L_ASSERT(list);
+    l_list_elt_s *p;
+    while((p = l_list_lpop(list)) != L_NULL)
+    {
+        l_list_elt_destroy(list, p);
+    }
     return L_SUCCESS;
 }
 /**
@@ -366,6 +378,11 @@ l_list_s *l_list_slice(l_list_s *list,  int m, int n)
     L_UNLOCK(&list->lock);
     return dest;
 
+}
+
+void l_list_set_elt_free_method(l_list_s *list, int (*free_elt)(l_list_elt_s *elt))
+{
+    list->free_elt = free_elt;
 }
 
 void l_list_display(l_list_s *list){
