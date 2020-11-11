@@ -3,6 +3,8 @@
 #include "l_mem.h"
 #include "l_log.h"
 #include "l_lock.h"
+#include "l_md5.h"
+
 /**
  * 销毁一个list元素,如果指定了元素销毁函数，则调用函数销毁
  */
@@ -10,7 +12,7 @@ int l_list_elt_destroy(l_list_s *list, l_list_elt_s *elt)
 {
     if(list->free_elt)
     {
-        return list->free_elt(elt);
+        list->free_elt(elt);
     }
     L_FREE(elt);
     return L_SUCCESS;
@@ -29,6 +31,7 @@ int l_list_init(l_list_s *list)
     list->last = L_NULL;
     list->size = 0;
     list->free_elt = L_NULL;
+    list->equals = l_list_elt_equals;
     L_LOCK_INIT(&list->lock);
     return L_SUCCESS;
 }
@@ -147,7 +150,7 @@ int l_list_insert(l_list_s *list, int n, void *data, size_t size)
     L_ASSERT(list);
     if(n > list->size)
     {
-        L_LOG_ERROR("list out of range, n:%d, size:%d\n", n, list->size);
+        L_LOG_ERROR("list out of range, n:%d, size:%lu\n", n, list->size);
         return L_FAIL;
     }
     l_list_elt_s *p;
@@ -200,7 +203,7 @@ int l_list_remove(l_list_s *list, int n)
     L_ASSERT(list);
     if(n >= list->size)
     {
-        L_LOG_ERROR("list out of range, n:%d, size:%d\n", n, list->size);
+        L_LOG_ERROR("list out of range, n:%d, size:%lu\n", n, list->size);
         return L_FAIL;
     }
     l_list_elt_s *p;
@@ -257,7 +260,7 @@ l_list_elt_s *l_list_get(l_list_s *list, int n)
     L_ASSERT(list);
     if(n >= list->size)
     {
-        L_LOG_ERROR("list out of range, n:%d, size:%d\n", n, list->size);
+        L_LOG_ERROR("list out of range, n:%d, size:%lu\n", n, list->size);
         return L_NULL;
     }
     l_list_elt_s *p;
@@ -358,7 +361,7 @@ l_list_s *l_list_slice(l_list_s *list,  int m, int n)
     L_LOCK(&list->lock);
     if(m < 0 || n > list->size - 1)
     {
-        L_LOG_ERROR("out of range (%d:%d)/%d\n", m,n, list->size);
+        L_LOG_ERROR("out of range (%d:%d)/%lu\n", m,n, list->size);
         return L_NULL;
     }
     l_list_s *dest;
@@ -384,6 +387,33 @@ void l_list_set_elt_free_method(l_list_s *list, int (*free_elt)(l_list_elt_s *el
 {
     list->free_elt = free_elt;
 }
+
+int l_list_elt_equals(l_list_elt_s *elt, void *data, size_t data_len)
+{
+    if(elt->data_len != data_len)
+    {
+        return L_FALSE;
+    }
+    if(memcmp(elt->data, data, data_len) == 0)
+    {
+        return L_TRUE;
+    };
+    return L_FALSE;
+}
+
+int l_list_elt_exist(l_list_s *list, void *data, size_t data_len)
+{
+    l_list_elt_s *elt = list->first;
+    while(elt)
+    {
+        if(list->equals(elt, data, data_len)){
+            return L_TRUE;
+        }
+        elt = elt->next;
+    }
+    return L_FALSE;
+}
+
 
 void l_list_display(l_list_s *list){
     L_ASSERT(list);

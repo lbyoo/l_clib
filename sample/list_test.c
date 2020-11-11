@@ -2,6 +2,7 @@
 #include "l_log.h"
 #include "l_type.h"
 #include "l_mem.h"
+#include <time.h>
 
 int test_remove(l_list_s *list)
 {
@@ -158,6 +159,29 @@ void test_slice(l_list_s *list)
     
 }
 
+void test_exists(l_list_s *list)
+{
+    l_list_lpush(list, "hello1", 6);
+    l_list_lpush(list, "hello2", 6);
+    l_list_lpush(list, "hello3", 6);
+    l_list_lpush(list, "hello4", 6);
+    char *a = "hello3";
+    if(l_list_elt_exist(list, a, 6) == L_TRUE)
+    {
+        L_LOG_INFO("exists1 test ok\n");
+    }
+    if(l_list_elt_exist(list, a, 5) == L_FALSE)
+    {
+        L_LOG_INFO("exists2 test ok\n");
+    }
+    if(l_list_elt_exist(list, "HELLO", 6) == L_FALSE)
+    {
+        L_LOG_INFO("exists3 test ok\n");
+    }
+
+
+}
+
 L_LIST_FREE_ELT_FUNC(test)
 {
     L_LOG_INFO("free mem %p\n", elt);
@@ -167,6 +191,7 @@ L_LIST_FREE_ELT_FUNC(test)
 
 int main(int argv, char *args)
 {
+    time_t t = time(0);
     l_list_s list;
     l_list_init(&list);
     l_list_set_elt_free_method(&list, L_LIST_FREE_ELT_FUNC_NAME(test));
@@ -179,6 +204,7 @@ int main(int argv, char *args)
     test_pop(&list);
     l_list_empty(&list);
     test_slice(&list);
+    test_exists(&list);
     l_list_destroy(&list);
     
 }

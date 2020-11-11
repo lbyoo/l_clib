@@ -11,7 +11,7 @@
     memset(&ptm,0, sizeof(ptm)); \
     localtime_r(&t, &ptm); \
     fprintf(stdout, "[ DEBUG ] [%4d-%02d-%02d %02d:%02d:%02d ] [ %s:%s:%d ] " format "", \
-    ptm.tm_year + 1900, ptm.tm_mon + 1, ptm.tm_mday, ptm.tm_hour, ptm.tm_min, ptm.tm_sec, \
+    ptm.tm_year + 1900, ptm.tm_mon + 1, ptm.tm_mday, ptm.tm_hour, ptm.tm_min, ptm.tm_sec,\
     __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
 }
 
