@@ -15,6 +15,7 @@ typedef struct l_list
     l_list_elt_s *last;
     int size;
     pthread_mutex_t lock;
+    int (*free_elt)(l_list_elt_s *elt);
     
 } l_list_s;
 
