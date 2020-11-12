@@ -170,41 +170,65 @@ void test_exists(l_list_s *list)
     {
         L_LOG_INFO("exists1 test ok\n");
     }
+    else{
+        L_LOG_INFO("exists1 test fail\n");
+    }
     if(l_list_elt_exist(list, a, 5) == L_FALSE)
     {
         L_LOG_INFO("exists2 test ok\n");
+    }
+    else{
+        L_LOG_INFO("exists2 test fail\n");
     }
     if(l_list_elt_exist(list, "HELLO", 6) == L_FALSE)
     {
         L_LOG_INFO("exists3 test ok\n");
     }
-
-
+    else{
+        L_LOG_INFO("exists3 test fail\n");
+    }
 }
 
+void test_bigdata(l_list_s *list)
+{
+    char *s;
+    for(int i = 0; i < 10000; i ++)
+    {
+        
+        L_MALLOC(s, char, 20);
+        sprintf(s, "hello%d", i);
+        l_list_rpush(list, s, strlen(s));
+    }
+    L_LOG_INFO("list size if %lu\n", list->size);
+}
 L_LIST_FREE_ELT_FUNC(test)
 {
-    L_LOG_INFO("free mem %p\n", elt);
+    // L_LOG_INFO("free mem %p\n", elt);
+    L_FREE(elt->data);
 }
 
-
+L_LIST_ELT_EQUALS_FUNC(test)
+{
+    return L_FALSE;
+}
 
 int main(int argv, char *args)
 {
-    time_t t = time(0);
     l_list_s list;
     l_list_init(&list);
     l_list_set_elt_free_method(&list, L_LIST_FREE_ELT_FUNC_NAME(test));
-    test_push_insert(&list);
-    l_list_empty(&list);
-    test_remove(&list);
-    l_list_empty(&list);
-    test_get(&list);
-    l_list_empty(&list);
-    test_pop(&list);
-    l_list_empty(&list);
-    test_slice(&list);
-    test_exists(&list);
+    l_list_set_elt_equals_method(&list, L_LIST_ELT_EQUALS_FUNC_NAME(test));
+    // test_push_insert(&list);
+    // l_list_empty(&list);
+    // test_remove(&list);
+    // l_list_empty(&list);
+    // test_get(&list);
+    // l_list_empty(&list);
+    // test_pop(&list);
+    // l_list_empty(&list);
+    // test_slice(&list);
+    // test_exists(&list);
+    test_bigdata(&list);
+    getchar();
     l_list_destroy(&list);
-    
 }

@@ -3,10 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "l_lock.h"
 
 /** 用于定义元素释放的函数,函数中不要释放 elt本身，只需要处理elt->data对应的数据 */
 #define L_LIST_FREE_ELT_FUNC_NAME(FUNC) l_list_free_elt_##FUNC
 #define L_LIST_FREE_ELT_FUNC(FUNC) int l_list_free_elt_##FUNC(l_list_elt_s *elt)
+
+#define L_LIST_ELT_EQUALS_FUNC_NAME(FUNC) l_list_elt_equals_##FUNC
+#define L_LIST_ELT_EQUALS_FUNC(FUNC) int l_list_elt_equals_##FUNC(l_list_elt_s *elt, void *data, size_t data_len)
 
 typedef struct l_list_elt l_list_elt_s;
 typedef struct l_list 
@@ -15,7 +19,7 @@ typedef struct l_list
     l_list_elt_s *current;
     l_list_elt_s *last;
     size_t size;
-    pthread_mutex_t lock;
+    L_MUTEX lock;
     int (*free_elt)(l_list_elt_s *elt);
     int (*equals)(l_list_elt_s *elt, void *data, size_t data_len);
     
@@ -47,5 +51,6 @@ extern l_list_s *l_list_slice(l_list_s *list, int m, int n);
 extern l_list_elt_s *l_list_elt_clone(l_list_elt_s *src);
 extern void l_list_display(l_list_s *list);
 extern void l_list_set_elt_free_method(l_list_s *list, int (*free_elt)(l_list_elt_s *elt));
+extern void l_list_set_elt_equals_method(l_list_s *list, int (*equals)(l_list_elt_s *elt, void *data, size_t data_len));
 
 #endif

@@ -387,6 +387,10 @@ void l_list_set_elt_free_method(l_list_s *list, int (*free_elt)(l_list_elt_s *el
 {
     list->free_elt = free_elt;
 }
+void l_list_set_elt_equals_method(l_list_s *list, int (*equals)(l_list_elt_s *elt, void *data, size_t data_len))
+{
+    list->equals = equals;
+}
 
 int l_list_elt_equals(l_list_elt_s *elt, void *data, size_t data_len)
 {
