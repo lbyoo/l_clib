@@ -46,12 +46,12 @@ int l_set_elt_destroy(l_set_s *list, l_set_elt_s *elt)
     return l_list_elt_destroy(list, elt);
 }
 
-int l_set_elt_exist(l_set_s *list, void *data, size_t data_len)
+L_BOOL l_set_elt_exist(l_set_s *list, void *data, size_t data_len)
 {
     return l_list_elt_exist(list, data, data_len);
 }
 
-int l_set_elt_equals(l_set_elt_s *elt, void *data, size_t data_len)
+L_BOOL l_set_elt_equals(l_set_elt_s *elt, void *data, size_t data_len)
 {
     return l_list_elt_equals(elt, data, data_len);
 }

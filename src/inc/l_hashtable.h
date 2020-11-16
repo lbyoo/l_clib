@@ -39,7 +39,7 @@ typedef int (*l_hashtable_enum_callback)(l_hashtable_entry_s *entry);
 extern int l_hashtable_init(l_hashtable_s *hash);
 extern int l_hashtable_destroy(l_hashtable_s *hash);
 extern int l_hashtable_empty(l_hashtable_s *hash);
-extern int l_hashtable_exist(l_hashtable_s *hash, char *key, l_hashtable_entry_s **found);
+extern L_BOOL l_hashtable_exist(l_hashtable_s *hash, char *key, l_hashtable_entry_s **found);
 extern int l_hashtable_push(l_hashtable_s *hash, char *key, void *value, size_t value_len);
 extern int l_hashtable_remove(l_hashtable_s *hash, char *key);
 extern int l_hashtable_entry_destroy(l_hashtable_s *hash, l_hashtable_entry_s *entry);

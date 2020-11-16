@@ -89,7 +89,7 @@ int l_hashtable_empty(l_hashtable_s *hash)
     L_UNLOCK(&hash->lock);
     return L_SUCCESS;
 }
-int l_hashtable_exist(l_hashtable_s *hash, char *key, l_hashtable_entry_s **found)
+L_BOOL l_hashtable_exist(l_hashtable_s *hash, char *key, l_hashtable_entry_s **found)
 {
     int pos = l_hashtable_hashcode(key);
     L_ASSERT(hash->_array[pos]);

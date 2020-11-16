@@ -389,7 +389,7 @@ void l_list_set_elt_equals_method(l_list_s *list, int (*equals)(l_list_elt_s *el
     list->equals = equals;
 }
 
-int l_list_elt_equals(l_list_elt_s *elt, void *data, size_t data_len)
+L_BOOL l_list_elt_equals(l_list_elt_s *elt, void *data, size_t data_len)
 {
     if(elt->data_len != data_len)
     {
@@ -402,7 +402,7 @@ int l_list_elt_equals(l_list_elt_s *elt, void *data, size_t data_len)
     return L_FALSE;
 }
 
-int l_list_elt_exist(l_list_s *list, void *data, size_t data_len)
+L_BOOL l_list_elt_exist(l_list_s *list, void *data, size_t data_len)
 {
     l_list_elt_s *elt = list->first;
     while(elt)
