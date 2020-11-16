@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "l_type.h"
 #include "l_lock.h"
 
 /** 用于定义元素释放的函数,函数中不要释放 elt本身，只需要处理elt->data对应的数据 */

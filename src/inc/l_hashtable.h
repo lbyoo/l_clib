@@ -35,7 +35,7 @@ typedef struct l_hashtable_entry
 
 //for each callback;
 typedef int (*l_hashtable_enum_callback)(l_hashtable_entry_s *entry);
-
+extern int l_hashtable_hashcode(char *key);
 extern int l_hashtable_init(l_hashtable_s *hash);
 extern int l_hashtable_destroy(l_hashtable_s *hash);
 extern int l_hashtable_empty(l_hashtable_s *hash);

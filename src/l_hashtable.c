@@ -11,14 +11,17 @@
 #include "l_type.h"
 #include "l_hashtable.h"
 
-static int l_hashtable_hashcode(char *key)
+int l_hashtable_hashcode(char *key)
 {
+    int seed = 27;
     unsigned char *p = (unsigned char *)key;
-    int rt = 0;
+    long long rt = 1;
     for(int i=0; i<strlen(key); i++)
     {
-        rt = (rt * 31 + *p) % MAX_HASHTABLE_ARRAY_SIZE;
+        rt = (rt * seed + *p) % MAX_HASHTABLE_ARRAY_SIZE;
+        p++;
     }
+    // printf("hashcode:%s:%d\n",key, rt);
     return rt;
 }
 static int l_hashtable_set_key(l_hashtable_entry_s *entry, const char *key)

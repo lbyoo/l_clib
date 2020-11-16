@@ -192,7 +192,7 @@ void test_exists(l_list_s *list)
 void test_bigdata(l_list_s *list)
 {
     char *s;
-    for(int i = 0; i < 10000; i ++)
+    for(int i = 0; i < 100000; i ++)
     {
         
         L_MALLOC(s, char, 20);
