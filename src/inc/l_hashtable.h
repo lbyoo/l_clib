@@ -28,6 +28,7 @@ typedef struct l_hashtable_entry
     int hashcode;
     l_hashtable_entry_s *next;
     l_hashtable_entry_s *prev;
+    int delete_flag;
 
 }l_hashtable_entry_s;
 
@@ -44,6 +45,7 @@ extern int l_hashtable_remove(l_hashtable_s *hash, char *key);
 extern int l_hashtable_entry_destroy(l_hashtable_s *hash, l_hashtable_entry_s *entry);
 extern int l_hashtable_enum(l_hashtable_s *hash, l_hashtable_enum_callback callback);
 extern l_hashtable_entry_s *l_hashtable_get(l_hashtable_s *hash, char *key);
+extern int l_hashtable_entry_init(l_hashtable_entry_s *entry);
 
 
 #define L_HASHTABLE_FREE_VALUE_FUNC_NAME(FUNC) l_hashtable_free_value_##FUNC

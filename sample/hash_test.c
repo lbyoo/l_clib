@@ -6,6 +6,7 @@
 L_HASHTABLE_ENUM_CALLBACK(test)
 {
     printf("--->%d, %s, %s\n", entry->hashcode, entry->key, (char*)entry->value);
+    entry->delete_flag = L_TRUE;
 }
 
 void test1(l_hashtable_s *hash)
@@ -28,6 +29,8 @@ void test1(l_hashtable_s *hash)
     {
         L_LOG_INFO("no exist ok\n");
     }
+    l_hashtable_enum(hash, L_HASHTABLE_ENUM_CALLBACK_NAME(test));
+    printf("after enum all:%d\n", hash->size);
     l_hashtable_enum(hash, L_HASHTABLE_ENUM_CALLBACK_NAME(test));
 }
 

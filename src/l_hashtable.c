@@ -126,6 +126,7 @@ int l_hashtable_push(l_hashtable_s *hash, char *key, void *value, size_t value_l
     
     l_hashtable_entry_s *entry;
     L_MALLOC(entry, l_hashtable_entry_s, 1);
+    l_hashtable_entry_init(entry);
     entry->hashcode = pos;
     l_hashtable_set_key(entry, key);
     entry->value = value;
@@ -194,9 +195,21 @@ l_hashtable_entry_s *l_hashtable_get(l_hashtable_s *hash, char *key)
     return L_NULL;
 }
 
+int l_hashtable_entry_init(l_hashtable_entry_s *entry)
+{
+    entry->delete_flag = L_FALSE;
+    entry->value = L_NULL;
+    entry->value_len = 0;
+    entry->hashcode = -1;
+    entry->key = L_NULL;
+    entry->next = L_NULL;
+    entry->prev = L_NULL;
+    return L_SUCCESS;
+}
+
 int l_hashtable_enum(l_hashtable_s *hash, l_hashtable_enum_callback callback)
 {
-    l_hashtable_entry_s *p;
+    l_hashtable_entry_s *p, *next;
     for(int i=0; i<MAX_HASHTABLE_ARRAY_SIZE; i++)
     {
         p = hash->_array[i]->first;
@@ -208,7 +221,12 @@ int l_hashtable_enum(l_hashtable_s *hash, l_hashtable_enum_callback callback)
             else{
                 printf("hash:%d, key:%s, value:%p\n", p->hashcode, p->key, p->value);
             }
-            p = p->next;
+            next = p->next;
+            if(p->delete_flag)
+            {
+                l_hashtable_remove(hash, p->key);
+            }
+            p = next;
         }
     }
 }

@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+"""
+Usage: program | ./memcheck.py
+"""
 import fileinput
 import pdb
 
@@ -20,6 +23,11 @@ for l in data.splitlines():
         # print("free:%s" %c[-1].strip())
     # print("size: %d" % len(s))
 
+print("以下内存申请可能未释放，请检查：")
 for l in s:
-    print(l)     
+    print(s[l])
+else:
+    print("没有需要处理的")
+
+
 
