@@ -1,3 +1,4 @@
 
 Program("list_test",["list_test.c",Glob('../src/*.c')], CPPPATH = '../src/inc', CCFLAGS = "-g")
 Program("set_test",["set_test.c",Glob('../src/*.c')], CPPPATH = '../src/inc', CCFLAGS = "-g")
+Program("hash_test",["hash_test.c",Glob('../src/*.c')], CPPPATH = '../src/inc', CCFLAGS = "-g")

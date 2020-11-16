@@ -49,12 +49,7 @@ int l_list_destroy(l_list_s *list)
     {
         return L_SUCCESS;
     }
-    l_list_elt_s *p;
-    while((p = l_list_lpop(list)) != L_NULL)
-    {
-        l_list_elt_destroy(list, p);
-    }
-    
+    l_list_empty(list);
     L_LOCK_DESTROY(&list->lock);
     return L_SUCCESS;
 }
@@ -67,10 +62,12 @@ int l_list_empty(l_list_s *list)
 {
     L_ASSERT(list);
     l_list_elt_s *p;
+    L_LOCK(&list->lock);
     while((p = l_list_lpop(list)) != L_NULL)
     {
         l_list_elt_destroy(list, p);
     }
+    L_UNLOCK(&list->lock);
     return L_SUCCESS;
 }
 /**
@@ -88,12 +85,12 @@ int l_list_lpush(l_list_s *list, void *data, size_t size)
     L_MALLOC(elt, l_list_elt_s, 1);
     elt->data = data;
     elt->data_len = size;
-    elt->pre = L_NULL;
+    elt->prev = L_NULL;
     elt->next = list->first;
     elt->data_len = size;
     if(list->first)
     {
-        list->first->pre = elt;
+        list->first->prev = elt;
     }
     list->first = elt;
     
@@ -121,7 +118,7 @@ int l_list_rpush(l_list_s *list, void *data, size_t size)
     L_MALLOC(elt, l_list_elt_s, 1);
     elt->data = data;
     elt->data_len = size;
-    elt->pre = list->last;
+    elt->prev = list->last;
     elt->next = L_NULL;
     if(list->last)
     {
@@ -168,23 +165,23 @@ int l_list_insert(l_list_s *list, int n, void *data, size_t size)
     }
     if(p == L_NULL)
     {
-        elt->pre = list->last;
+        elt->prev = list->last;
         list->last->next = elt;
         list->last = elt;
         elt->next = L_NULL;
         goto success;
     }
-    if(p->pre)
+    if(p->prev)
     {
-        p->pre->next = elt;
-        elt->pre = p->pre;
+        p->prev->next = elt;
+        elt->prev = p->prev;
     }else
     {
-        elt->pre = L_NULL;
+        elt->prev = L_NULL;
         list->first = elt;   
     }
     elt->next = p;
-    p->pre = elt;
+    p->prev = elt;
 
 success:
     list->size++;
@@ -217,27 +214,27 @@ int l_list_remove(l_list_s *list, int n)
         i++;
     }
     elt = p;
-    if(p->pre == L_NULL && p->next == L_NULL){
+    if(p->prev == L_NULL && p->next == L_NULL){
         list->first = L_NULL;
         list->last = L_NULL;
         goto success;
     }
-    if(p->pre == L_NULL && p->next)
+    if(p->prev == L_NULL && p->next)
     {
         list->first = p->next;
-        p->next->pre = L_NULL;
+        p->next->prev = L_NULL;
         goto success;
     }
-    if(p->next == L_NULL && p->pre)
+    if(p->next == L_NULL && p->prev)
     {
-        list->last = p->pre;
-        p->pre->next = L_NULL;
+        list->last = p->prev;
+        p->prev->next = L_NULL;
         goto success;
     }
-    if(p->next && p->pre)
+    if(p->next && p->prev)
     {
-        p->pre->next = p->next;
-        p->next->pre = p->pre;
+        p->prev->next = p->next;
+        p->next->prev = p->prev;
         goto success;
     }
 
@@ -292,7 +289,7 @@ l_list_elt_s *l_list_lpop(l_list_s *list)
     list->first = list->first->next;
     if(list->first)
     {
-        list->first->pre = L_NULL;
+        list->first->prev = L_NULL;
     }
     list->size--;
     if(list->size == 0)
@@ -318,7 +315,7 @@ l_list_elt_s *l_list_rpop(l_list_s *list)
     l_list_elt_s *elt;
     L_LOCK(&list->lock);
     elt = list->last;
-    list->last = list->last->pre;
+    list->last = list->last->prev;
     if(list->last)
     {
         list->last->next = L_NULL;
@@ -342,7 +339,7 @@ l_list_elt_s *l_list_elt_clone(l_list_elt_s *src)
     L_ASSERT(src);
     l_list_elt_s *dest;
     L_MALLOC(dest, l_list_elt_s, 1);
-    dest->pre = src->pre;
+    dest->prev = src->prev;
     dest->next = src->next;
     dest->data_len = src->data_len;
     dest->data = src->data;

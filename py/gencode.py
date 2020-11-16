@@ -1,6 +1,6 @@
 import time
 
-module = "set"
+module = "hashtable"
 prefix = "l_"
 
 h_file = "{}{}.h".format(prefix, module)
@@ -25,3 +25,6 @@ with open("src/%s" % c_file, "w") as f:
     f.write(comm_head.format(c_file, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     for inc in comm_inc:
         f.write("#include \"%s\"\n" % inc)
+
+
+

@@ -1,6 +1,7 @@
 #ifndef __L_LOG_H__
 #define __L_LOG_H__
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include <memory.h>
 

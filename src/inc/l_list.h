@@ -27,7 +27,7 @@ typedef struct l_list
 
 typedef struct l_list_elt
 {
-   l_list_elt_s *pre;
+   l_list_elt_s *prev;
    l_list_elt_s *next;
    void *data; 
    int data_len;
